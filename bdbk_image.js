@@ -29,7 +29,7 @@ $(document).ready(function(){
         {
             var imgId=window.location.href.split('pic=')[1];
             imgPicture.src='https://imgsrc.baidu.com/baike/pic/item/' + imgId + '.jpg';
-            $('a.tool-button.origin').attr('src','https://imgsrc.baidu.com/baike/pic/item/' + imgId + '.jpg')
+            $('a.tool-button.origin').attr('','https://imgsrc.baidu.com/baike/pic/item/' + imgId + '.jpg')
         }
     }
 });
