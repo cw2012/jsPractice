@@ -2,7 +2,7 @@
 // @icon           http://baidu.com/favicon.ico
 // @name           百度百科 无水印图片查看
 // @namespace      http://weibo.com/liangxiafengge
-// @version        1.3
+// @version        1.3.1
 // @description    查看百科最新版本、历史版本无水印图片，历史图册页面进入的图片暂时不支持。
 // @match          http*://baike.baidu.com/picture/*
 // @match          http*://baike.baidu.com/historypic/*
@@ -29,6 +29,7 @@ $(document).ready(function(){
         {
             var imgId=window.location.href.split('pic=')[1];
             imgPicture.src='https://imgsrc.baidu.com/baike/pic/item/' + imgId + '.jpg';
+            $('a.tool-button.origin').attr('src','https://imgsrc.baidu.com/baike/pic/item/' + imgId + '.jpg')
         }
     }
 });
