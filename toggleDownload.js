@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         新传媒下载
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  下载新传媒的视频、字幕
 // @author       You
 // @match        http*://video.toggle.sg/*/series/*
@@ -17,13 +17,18 @@
 
 (function() {
     'use strict';
+    var mediaId='';
+    if(location.href.indexOf('movies'>0))
+       mediaId=location.href.split(/movies\//)[1].split('/')[1].split('/')[0]
+    else
+        mediaId=location.href.split(/ep[0-9]+\//)[1].split('/')[0]
     var media = {
-        mediaId : location.href.split(/ep[0-9]+\//)[1].split('/')[0],
+        mediaId : mediaId,
         mediaName:'',
         subtitles:[],
         // 获取字幕信息
         getSubtitle: function(Id){
-            var lang = ['eng','zho','msa'],targetLang=['英文','中文','马来西亚'];
+            var lang = ['eng','zho','msa','tam'],targetLang=['英文','中文','马来语','泰米尔语'];
             GM_xmlhttpRequest({
                 url:'https://sub.toggle.sg/toggle_api/v1.0/apiService/getSubtitleFilesForMedia?mediaId='+Id,
                 method:'get',
