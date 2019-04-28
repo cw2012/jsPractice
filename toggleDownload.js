@@ -18,7 +18,7 @@
 (function() {
     'use strict';
     var mediaId='';
-    if(location.href.indexOf('movies'>0))
+    if(location.href.indexOf('movies')>0)
        mediaId=location.href.split(/movies\//)[1].split('/')[1].split('/')[0]
     else
         mediaId=location.href.split(/ep[0-9]+\//)[1].split('/')[0]
