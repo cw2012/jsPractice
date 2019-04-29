@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         新传媒下载
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.3
 // @description  下载新传媒的视频、字幕
 // @author       You
 // @match        http*://video.toggle.sg/*/series/*
@@ -19,9 +19,9 @@
     'use strict';
     var mediaId='';
     if(location.href.indexOf('movies')>0)
-       mediaId=location.href.split(/movies\//)[1].split('/')[1].split('/')[0]
+       mediaId=location.href.split(/movies\//)[1].split('/')[1].split('/')[0].match(/[0-9]+/)[0]
     else
-        mediaId=location.href.split(/ep[0-9]+\//)[1].split('/')[0]
+        mediaId=location.href.split(/ep[0-9]+\//)[1].split('/')[0].match(/[0-9]+/)[0]
     var media = {
         mediaId : mediaId,
         mediaName:'',
@@ -51,6 +51,7 @@
                 this.getInfo(Files);
             }else{
                 GM_xmlhttpRequest({
+                    //   https://tvpapi-as.ott.kaltura.com/v3_9/gateways/jsonpostgw.aspx?m=GetMediaInfo
                     url:'https://tvpapi-as.ott.kaltura.com/v3_9/gateways/jsonpostgw.aspx?m=GetMediaInfo',
                     method:'post',
                     dataType : 'json',
