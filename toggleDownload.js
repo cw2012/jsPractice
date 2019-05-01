@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         新传媒下载
 // @namespace    http://tampermonkey.net/
-// @version      0.3
+// @version      0.3.2
 // @description  下载新传媒的视频、字幕
 // @author       You
 // @match        http*://video.toggle.sg/*/series/*
 // @match        http*://video.toggle.sg/*/movies/*
 // @match        http*://video.toggle.sg/*/tv-show/*
+// @match        http*://video.toggle.sg/*/extras/*
 // @require      https://code.jquery.com/jquery-3.2.1.min.js
 // @icon         https://video.toggle.sg/blob/5006328/2c6398f2bf4c0d3e9d43efc9bfb87bbc/toggle-video-favicon.ico
 // @run-at       document-end
@@ -18,10 +19,7 @@
 (function() {
     'use strict';
     var mediaId='';
-    if(location.href.indexOf('movies')>0)
-       mediaId=location.href.split(/movies\//)[1].split('/')[1].split('/')[0].match(/[0-9]+/)[0]
-    else
-        mediaId=location.href.split(/ep[0-9]+\//)[1].split('/')[0].match(/[0-9]+/)[0]
+        mediaId=location.href.split('/').pop().match(/[0-9]+/)[0];
     var media = {
         mediaId : mediaId,
         mediaName:'',
@@ -114,7 +112,7 @@
         },
         getm3u8(content){
             var urls = content.match(/http\S+\.m3u8/g);
-            var p = content.match(/[0-9]+x[0-9]+/g);
+            var p = content.match(/[0-9]{2,3}x[0-9]{3,4}/g);
             var el = $('#formatSelect').empty();
             for(var i=0;i<p.length;i++){
                 el.append($('<option></option>').attr('value',urls[i]).text(p[i].split('x')[1]+'P'));
