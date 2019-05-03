@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         新传媒下载
 // @namespace    http://tampermonkey.net/
-// @version      0.3.2
+// @version      0.4
 // @description  下载新传媒的视频、字幕
 // @author       You
 // @match        http*://video.toggle.sg/*/series/*
@@ -19,7 +19,7 @@
 (function() {
     'use strict';
     var mediaId='';
-        mediaId=location.href.split('/').pop().match(/[0-9]+/)[0];
+    mediaId=location.href.split('/').pop().match(/[0-9]+/)[0];
     var media = {
         mediaId : mediaId,
         mediaName:'',
@@ -86,19 +86,6 @@
                     sel.append( $('<option></option>)').attr('value',Files[i].URL).text(Files[i].Format.substr(4,7)) );
                 }
             }
-            sel.on('change',()=>{// 选择设备后加载不同分辨率的地址
-                var video = $('#videoSelect').find("option:selected").val();
-                GM_xmlhttpRequest({
-                    url:video,
-                    method:'get',
-                    onload:(data)=>{
-                        if(data){
-                            data=data.responseText;
-                            this.getm3u8(data);
-                        }
-                    }
-                });
-            });
             var button = $('<a id="downloadVideo">下载视频</a>').css('cursor', 'pointer');
             button.on('click',()=>{
                 GM_setClipboard($('#formatSelect').find('option:selected').val());
@@ -108,17 +95,56 @@
             $('#subA').css('cursor', 'pointer').on('click',()=>{
                 GM_download($('#subSelect').find('option:selected').val(),this.mediaName+$('#subSelect').find('option:selected').text()+'.srt');
             });
+            sel.on('change',()=>{// 选择设备后加载不同分辨率的地址
+                var video = $('#videoSelect').find("option:selected").val();
+                GM_xmlhttpRequest({
+                    url:video,
+                    method:'get',
+                    onload:(data)=>{
+                        if(data){
+                            // 在页面上加载选择框和按钮
+                            data=data.responseText;
+                            this.getm3u8(data,this.mediaName)
+                        }
+                    }
+                });
+            });
+            media.getSubtitle(media.mediaId);
             sel.change();
         },
-        getm3u8(content){
-            var urls = content.match(/http\S+\.m3u8/g);
-            var p = content.match(/[0-9]{2,3}x[0-9]{3,4}/g);
-            var el = $('#formatSelect').empty();
-            for(var i=0;i<p.length;i++){
-                el.append($('<option></option>').attr('value',urls[i]).text(p[i].split('x')[1]+'P'));
+        getm3u8(content, mediaName){
+            //debugger
+            if(content.indexOf('#EXT-X-MEDIA:TYPE=AUDIO')>-1 && !$('#audioSel')[0]){
+                var audioSel = $('<select id="audioSel"></select>'),videoSel=$('#formatSelect').empty();
+                var arr = content.match(/#EXT-X-MEDIA:TYPE=AUDIO[\S]+/g);
+                var langs = ['English','Korean','Chinese'],trans=['英语','韩语','汉语'],matches='';
+                for(var i=0;i<arr.length;i++){
+                    // 加载音轨选择框                                           网址                                                  显示音轨的国别
+                    audioSel.append($('<option></option>').attr('value',arr[i].match(/https*[\S]+m3u8/)[0]).text(trans[langs.indexOf(arr[i].match(/[\w]+/g)[11])]));
+                }
+                //去掉音轨部分，只保留视频
+                content=content.replace(/\n/g,'').substring(content.indexOf('#EXT-X-STREAM-INF:PROGRAM-ID'),content.length);
+                arr=content.match(/https*.*?m3u8/g);
+                var p  =content.match(/[\d]{2,3}x[\d]{3,4}/g);
+                for(i=0;i<arr.length;i++){
+                    videoSel.append($('<option></option>').attr('value',arr[i]).text(p[i].split('x')[1]+'P'));//填充视频选择框
+                }
+                $('.video__meta .meta .item__tags').append('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;').append(audioSel).append('<a id="subAudio">下载音轨</a>');// 在页面上加载选择框和按钮
+                $('#subAudio').css('cursor', 'pointer').on('click',()=>{
+                    GM_download($('#audioSel').find('option:selected').val(),mediaName+$('#audioSel').find('option:selected').text());
+                });
+            } else {
+                if(content.indexOf('#EXT-X-MEDIA:TYPE=AUDIO')>-1){
+                    content=content.replace(/\n/g,'').substring(content.indexOf('#EXT-X-STREAM-INF:PROGRAM-ID'),content.length);
+                }
+                var urls = content.match(/https*.*?.m3u8/g);
+                var p = content.match(/[\d]{2,3}x[\d]{3,4}/g);
+                var el = $('#formatSelect').empty();
+                for(var j=0;j<p.length;j++){
+                    el.append($('<option></option>').attr('value',urls[j]).text(p[j].split('x')[1]+'P'));
+                }
             }
         }
     };
     media.getVideoInfo(media.mediaId);
-    media.getSubtitle(media.mediaId);
 })();
