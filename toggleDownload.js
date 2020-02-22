@@ -1,13 +1,19 @@
 // ==UserScript==
 // @name         新传媒下载
 // @namespace    http://tampermonkey.net/
-// @version      0.4
+// @version      0.4.1
 // @description  下载新传媒的视频、字幕
 // @author       You
-// @match        http*://video.toggle.sg/*/series/*
-// @match        http*://video.toggle.sg/*/movies/*
-// @match        http*://video.toggle.sg/*/tv-show/*
-// @match        http*://video.toggle.sg/*/extras/*
+// @match        http*://mewatch.sg/*/series/*
+// @match        http*://www.mewatch.sg/*/series/*
+// @match        http*://mewatch.sg/*/movies/*
+// @match        http*://www.mewatch.sg/*/movies/*
+// @match        http*://mewatch.sg/*/tv-show/*
+// @match        http*://www.mewatch.sg/*/tv-show/*
+// @match        http*://mewatch.sg/*/tv-show/*
+// @match        http*://www.mewatch.sg/*/tv-show/*
+// @match        http*://mewatch.sg/*/extras/*
+// @match        http*://www.mewatch.sg/*/extras/*
 // @require      https://code.jquery.com/jquery-3.2.1.min.js
 // @icon         https://video.toggle.sg/blob/5006328/2c6398f2bf4c0d3e9d43efc9bfb87bbc/toggle-video-favicon.ico
 // @run-at       document-end
